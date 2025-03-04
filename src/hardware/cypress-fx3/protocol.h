@@ -38,21 +38,23 @@
 #define NUM_SIMUL_TRANSFERS	32
 #define MAX_EMPTY_TRANSFERS	(NUM_SIMUL_TRANSFERS * 2)
 
-#define NUM_CHANNELS		16
+#define NUM_CHANNELS		32 /*changed from 16 to 32, so it can see 32 channels in Fx3*/
 
 #define FX3_REQUIRED_VERSION_MAJOR	1
 
 #define MAX_8BIT_SAMPLE_RATE	SR_MHZ(24)
-#define MAX_16BIT_SAMPLE_RATE	SR_MHZ(100)
+#define MAX_16BIT_SAMPLE_RATE	SR_MHZ(100)  /*Look into this one, find frequency for 32 bit*/
+#define MAX_32BIT_SAMPLE_RATE	SR_MHZ(200)
 #define FX3_PIB_CLOCK			SR_MHZ(400)
 
 /* 6 delay states of up to 256 clock ticks */
 #define MAX_SAMPLE_DELAY	(6 * 256)
 
-#define DEV_CAPS_16BIT_POS	0
+#define DEV_CAPS_32BIT_POS	0   /* it was DEV_CAPS_16BIT_POS */
 #define DEV_CAPS_AX_ANALOG_POS	1
 
-#define DEV_CAPS_16BIT		(1 << DEV_CAPS_16BIT_POS)
+/* it was DEV_CAPS_16BIT */
+#define DEV_CAPS_32BIT		(1 << DEV_CAPS_32BIT_POS)
 #define DEV_CAPS_AX_ANALOG	(1 << DEV_CAPS_AX_ANALOG_POS)
 
 /* Protocol commands */

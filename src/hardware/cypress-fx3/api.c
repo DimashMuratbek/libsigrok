@@ -28,7 +28,7 @@ static const struct cypress_fx3_profile supported_fx3[] = {
 	 */
 	{ 0x04b4, 0x1234, "Cypress", "FX3", NULL,
 		"cypress-fx3.fw",
-		DEV_CAPS_16BIT, NULL, NULL},
+		DEV_CAPS_32BIT, NULL, NULL},  /*was DEV_CAPS_16BIT*/
 
 	ALL_ZERO
 };
@@ -102,7 +102,7 @@ static GSList *scan(struct sr_dev_driver *di, GSList *options)
 	int num_logic_channels = 0, num_analog_channels = 0;
 	const char *conn;
 	char manufacturer[64], product[64], serial_num[64], connection_id[64];
-	char channel_name[16];
+	char channel_name[32];  /*Was 16 change to 32*/
 
 	drvc = di->context;
 	
@@ -210,7 +210,7 @@ static GSList *scan(struct sr_dev_driver *di, GSList *options)
 		sdi->connection_id = g_strdup(connection_id);
 
 		/* Fill in channellist according to this device's profile. */
-		num_logic_channels = prof->dev_caps & DEV_CAPS_16BIT ? 16 : 8;
+		num_logic_channels = prof->dev_caps & DEV_CAPS_32BIT ? 32 : 16;  /* was 16 : 8, checks if the device capabailities is set to 16 bit, if flase then it sets to 8 bit */
 		num_analog_channels = prof->dev_caps & DEV_CAPS_AX_ANALOG ? 1 : 0;
 
 		/* Logic channels, all in one channel group. */
@@ -225,7 +225,7 @@ static GSList *scan(struct sr_dev_driver *di, GSList *options)
 		sdi->channel_groups = g_slist_append(NULL, cg);
 
 		for (j = 0; j < num_analog_channels; j++) {
-			snprintf(channel_name, 16, "A%d", j);
+			snprintf(channel_name, 32, "A%d", j);   /*changed 16 to 32*/
 			ch = sr_channel_new(sdi, j + num_logic_channels,
 					SR_CHANNEL_ANALOG, TRUE, channel_name);
 
