@@ -635,7 +635,7 @@ static int start_transfers(const struct sr_dev_inst *sdi)
 	num_transfers = get_number_of_transfers(devc);
 
 	size = get_buffer_size(devc);
-	sr_info("num_transfers: %d, buffer_size: %d", num_transfers,size);
+	sr_info("num_transfers: %d, buffer_size: %zu", num_transfers,size);
 	devc->submitted_transfers = 0;
 
 	devc->transfers = g_try_malloc0(sizeof(*devc->transfers) * num_transfers);
