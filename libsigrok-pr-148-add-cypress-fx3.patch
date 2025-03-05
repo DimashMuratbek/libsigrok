@@ -207,7 +207,7 @@ index 00000000..81b8eee8
 +	 */
 +	{ 0x04b4, 0x1234, "Cypress", "FX3", NULL,
 +		"cypress-fx3.fw",
-+		DEV_CAPS_32BIT, NULL, NULL},
++		DEV_CAPS_16BIT, NULL, NULL},
 +
 +	ALL_ZERO
 +};
@@ -245,8 +245,7 @@ index 00000000..81b8eee8
 +	SR_MHZ(10),
 +	SR_MHZ(25),
 +	SR_MHZ(50),
-+	SR_MHZ(100),
-+	SR_MHZ(200),
++	SR_MHZ(100), 
 +};
 +
 +static gboolean is_plausible(const struct libusb_device_descriptor *des)
@@ -282,7 +281,7 @@ index 00000000..81b8eee8
 +	int num_logic_channels = 0, num_analog_channels = 0;
 +	const char *conn;
 +	char manufacturer[64], product[64], serial_num[64], connection_id[64];
-+	char channel_name[32];
++	char channel_name[16];
 +
 +	drvc = di->context;
 +	
@@ -390,7 +389,7 @@ index 00000000..81b8eee8
 +		sdi->connection_id = g_strdup(connection_id);
 +
 +		/* Fill in channellist according to this device's profile. */
-+		num_logic_channels = prof->dev_caps & DEV_CAPS_32BIT ? 32 : 16;
++		num_logic_channels = prof->dev_caps & DEV_CAPS_16BIT ? 16 : 8;
 +		num_analog_channels = prof->dev_caps & DEV_CAPS_AX_ANALOG ? 1 : 0;
 +
 +		/* Logic channels, all in one channel group. */
@@ -405,7 +404,7 @@ index 00000000..81b8eee8
 +		sdi->channel_groups = g_slist_append(NULL, cg);
 +
 +		for (j = 0; j < num_analog_channels; j++) {
-+			snprintf(channel_name, 32, "A%d", j);
++			snprintf(channel_name, 16, "A%d", j);
 +			ch = sr_channel_new(sdi, j + num_logic_channels,
 +					SR_CHANNEL_ANALOG, TRUE, channel_name);
 +
@@ -792,9 +791,9 @@ index 00000000..21aacf40
 +	samplerate = devc->cur_samplerate;
 +
 +	/* Compute the sample rate. */
-+	if (devc->sample_wide && samplerate > MAX_32BIT_SAMPLE_RATE) {
++	if (devc->sample_wide && samplerate > MAX_16BIT_SAMPLE_RATE) {
 +		sr_err("Unable to sample at %" PRIu64 "Hz "
-+		       "when collecting 32-bit samples.", samplerate);
++		       "when collecting 16-bit samples.", samplerate);
 +		return SR_ERR;
 +	}
 +
@@ -1341,7 +1340,7 @@ index 00000000..21aacf40
 +	num_transfers = get_number_of_transfers(devc);
 +
 +	size = get_buffer_size(devc);
-+	sr_info("num_transfers: %d, buffer_size: %zu", num_transfers,size);
++	sr_info("num_transfers: %d, buffer_size: %d", num_transfers,size);
 +	devc->submitted_transfers = 0;
 +
 +	devc->transfers = g_try_malloc0(sizeof(*devc->transfers) * num_transfers);
@@ -1481,22 +1480,21 @@ index 00000000..4b7c6a1e
 +#define NUM_SIMUL_TRANSFERS	32
 +#define MAX_EMPTY_TRANSFERS	(NUM_SIMUL_TRANSFERS * 2)
 +
-+#define NUM_CHANNELS		32
++#define NUM_CHANNELS		16
 +
 +#define FX3_REQUIRED_VERSION_MAJOR	1
 +
 +#define MAX_8BIT_SAMPLE_RATE	SR_MHZ(24)
 +#define MAX_16BIT_SAMPLE_RATE	SR_MHZ(100)
-+#define MAX_32BIT_SAMPLE_RATE	SR_MHZ(200)
 +#define FX3_PIB_CLOCK			SR_MHZ(400)
 +
 +/* 6 delay states of up to 256 clock ticks */
 +#define MAX_SAMPLE_DELAY	(6 * 256)
 +
-+#define DEV_CAPS_32BIT_POS	 0
++#define DEV_CAPS_16BIT_POS	0
 +#define DEV_CAPS_AX_ANALOG_POS	1
 +
-+#define DEV_CAPS_32BIT		(1 << DEV_CAPS_32BIT_POS)
++#define DEV_CAPS_16BIT		(1 << DEV_CAPS_16BIT_POS)
 +#define DEV_CAPS_AX_ANALOG	(1 << DEV_CAPS_AX_ANALOG_POS)
 +
 +/* Protocol commands */
